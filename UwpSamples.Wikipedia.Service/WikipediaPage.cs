@@ -2,6 +2,8 @@ namespace UwpSamples.Wikipedia.Service
 {
     #region Namespace Imports
 
+    using System.Net;
+
     using Newtonsoft.Json;
 
     #endregion
@@ -15,6 +17,8 @@ namespace UwpSamples.Wikipedia.Service
 
         [JsonProperty("title")]
         public string Title { get; set; }
+
+        public string Uri => $"https://en.wikipedia.org/wiki/{WebUtility.UrlEncode(Title.Replace(' ', '_'))}";
 
         #endregion
     }

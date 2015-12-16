@@ -25,6 +25,7 @@
         private readonly IWikipediaService _wikipediaService;
 
         private string _queryText;
+        private WikipediaPage _selectedPage;
 
         #endregion
 
@@ -34,7 +35,7 @@
         {
             _wikipediaService = wikipediaService;
 
-            _searchCommand = new DelegateCommand(SearchAsync, CanSearch);
+            _searchCommand = new DelegateCommand(SearchAsync, () => !string.IsNullOrWhiteSpace(QueryText));
         }
 
         #endregion
@@ -61,11 +62,21 @@
 
         public ObservableCollection<WikipediaPage> SearchResults { get; } = new ObservableCollection<WikipediaPage>();
 
+        public WikipediaPage SelectedPage
+        {
+            get
+            {
+                return _selectedPage;
+            }
+            set
+            {
+                SetProperty(ref _selectedPage, value);
+            }
+        }
+
         #endregion
 
         #region Methods
-
-        private bool CanSearch() => !string.IsNullOrWhiteSpace(QueryText);
 
         private async void SearchAsync()
         {

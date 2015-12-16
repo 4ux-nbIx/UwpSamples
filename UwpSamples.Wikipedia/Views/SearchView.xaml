@@ -1,16 +1,22 @@
 ﻿<Page x:Class="UwpSamples.Wikipedia.Views.SearchView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:converters="using:UwpSamples.Wikipedia.Converters"
+      xmlns:core="using:Microsoft.Xaml.Interactions.Core"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:mvvm="using:Prism.Windows.Mvvm"
       xmlns:service="using:UwpSamples.Wikipedia.Service"
       xmlns:viewModels="using:UwpSamples.Wikipedia.ViewModels"
-      xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:wikipedia="using:UwpSamples.Wikipedia"
       d:DataContext="{d:DesignInstance viewModels:SearchViewModel}"
       mvvm:ViewModelLocator.AutoWireViewModel="True"
       mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -18,22 +24,61 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <AutoSuggestBox PlaceholderText="search" QueryIcon="Find" Margin="6" Text="{Binding QueryText, Mode=TwoWay}">
+        <AutoSuggestBox Margin="6"
+                        PlaceholderText="search"
+                        QueryIcon="Find"
+                        Text="{Binding QueryText,
+                                       Mode=TwoWay}">
+
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="QuerySubmitted">
+
                     <core:EventTriggerBehavior.Actions>
                         <core:InvokeCommandAction Command="{Binding SearchCommand}" />
                     </core:EventTriggerBehavior.Actions>
+
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
+
         </AutoSuggestBox>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding SearchResults}">
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding SearchResults}"
+                  SelectedItem="{Binding SelectedPage,
+                                         Mode=TwoWay}">
+
             <ListView.ItemTemplate>
                 <DataTemplate d:DataContext="{d:DesignInstance service:WikipediaPage}">
                     <TextBlock Text="{Binding Title}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
+
         </ListView>
     </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+
+            <CommandBar.PrimaryCommands>
+                <AppBarButton IsEnabled="{Binding SelectedPage, Converter={StaticResource ObjectToBooleanConverter}}" Label="open">
+
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click">
+
+                            <core:EventTriggerBehavior.Actions>
+                                <wikipedia:LaunchUriAction Uri="{Binding SelectedPage.Uri}" />
+                            </core:EventTriggerBehavior.Actions>
+
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+
+                    <AppBarButton.Icon>
+                        <SymbolIcon Symbol="OpenFile" />
+                    </AppBarButton.Icon>
+
+                </AppBarButton>
+            </CommandBar.PrimaryCommands>
+
+        </CommandBar>
+    </Page.BottomAppBar>
 </Page>
