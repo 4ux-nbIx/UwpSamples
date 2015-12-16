@@ -1,4 +1,5 @@
-﻿<Application x:Class="UwpSamples.Wikipedia.App"
+﻿<windows:PrismAutofacApplication x:Class="UwpSamples.Wikipedia.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:windows="using:Prism.Autofac.Windows"
              RequestedTheme="Light" />
